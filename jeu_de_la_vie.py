@@ -2,7 +2,7 @@ import turtle as tu
 import itertools as tool
 
 tu.Screen().tracer(0)
-state_list = [0 for y in range(int((tu.screensize()[0]*tu.screensize()[1])/100))]
+state_list = [[0 for x in range(int(tu.screensize()[0]/10))] for y in range(tu.screensize()[1])]
 object_list = []
 
 class Pixel():
