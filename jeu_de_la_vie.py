@@ -4,24 +4,7 @@ import itertools as tool
 import time as ti
 
 tu.Screen().tracer(0)
-state_list = [[0 for x in range(int(tu.screensize()[0]/10)+2)] for y in range(int(tu.screensize()[1]/10)+2)]
 
-def on_click_change(x,y):
-    state_list[int((y+tu.window_height()/2)/10)][int((x+tu.window_width()/2)/10)] += 1
-    if state_list[int((y+tu.window_height()/2)/10)][int((x+tu.window_width()/2)/10)] == 1:
-        state_list[int((y+tu.window_height()/2)/10)][int((x+tu.window_width()/2)/10)] = 0
-    
-def on_motion(event):
-    global mouse_x, mouse_y
-    mouse_x = event.x - tu.window_width() / 2
-    mouse_y = -event.y + tu.window_height() / 2
-
-def tick():
-    tu.clear()
-    tu.goto(m.floor(mouse_x/10)*10, m.floor(mouse_y/10)*10)
-    tu.stamp()
-    tu.Screen().ontimer(tick, 1000 // 30)
-    
 class Pixel(tu.Turtle):
 
     def __init__(self, coords, pixel_state, dead_neig, alive_neig):
@@ -53,27 +36,53 @@ class Pixel(tu.Turtle):
 
     def draw_pixel(self):
         self.up()
-        self.goto(self.coords[0]*10,self.coords[1]*10)
+        self.goto(self.coords[0]*10-tu.window_width()/2, self.coords[1]*10-tu.window_height()/2)
         self.seth(0)
-        self.begin_fill()
         self.down()
+        self.color('black')
+        self.begin_fill()
         for i in range(4):
             self.seth(i*90)
             self.forward(10)
         self.end_fill()
 
+    def tick(self):
+        self.clear()
+        tu.register_shape('10_10_square', ((-10, 0), (-10, 10), (0, 10), (0, 0)))
+        self.shape("10_10_square")
+        self.color('red')
+        self.goto(m.floor(mouse_x/10)*10, m.floor(mouse_y/10)*10)
+        self.stamp()
+        tu.Screen().ontimer(self.tick, 1000 // 30)
+
+tick_object = Pixel([-1,-1], 0, 0, 0)
+
+state_list = [[0 for x in range(int(tu.window_width()/10)+2)] for y in range(int(tu.window_height()/10)+2)]
+object_list = [[(Pixel([x,y], state_list[y][x], 0, 0)) for x in range(int(tu.window_width()/10)+2)] for y in range(int(tu.window_height()/10)+2)]
+     
+def on_click_change(x,y):
+    state_list[int((y+tu.window_height()/2)/10)][int((x+tu.window_width()/2)/10)] += 1
+    object_list[int((y+tu.window_height()/2)/10)][int((x+tu.window_width()/2)/10)].pixel_state += 1
+    if state_list[int((y+tu.window_height()/2)/10)][int((x+tu.window_width()/2)/10)] == 2:
+        state_list[int((y+tu.window_height()/2)/10)][int((x+tu.window_width()/2)/10)] = 0
+        object_list[int((y+tu.window_height()/2)/10)][int((x+tu.window_width()/2)/10)].pixel_state = 0
+        object_list[int((y+tu.window_height()/2)/10)][int((x+tu.window_width()/2)/10)].clear_pixel()
+        print('non')
+    else:
+        object_list[int((y+tu.window_height()/2)/10)][int((x+tu.window_width()/2)/10)].draw_pixel()
+        print('oui')
+    tu.Screen().update()
+
+def on_motion(event):
+    global mouse_x, mouse_y
+    mouse_x = event.x - tu.window_width() / 2
+    mouse_y = -event.y + tu.window_height() / 2
+
 tu.Screen().onclick(on_click_change)
 mouse_x, mouse_y = 0, 0
 tu.getcanvas().bind("<Motion>", on_motion)
-tu.register_shape('10_10_square', ((0, 0), (0, 10), (10, 10), (10, 0)))
-tu.shape("10_10_square")
-tu.color('red')
-tu.up()
-tick()
+tick_object.tick()
 tu.Screen().mainloop()
-
-
-object_list = [[(Pixel([x,y], state_list[y][x], 0, 0)) for x in range(int(tu.screensize()[0]/10)+2)] for y in range(int(tu.screensize()[1]/10)+2)]
 
 while True:
     for x, y in tool.product(range(int(tu.screensize()[0]/10)), range(int(tu.screensize()[1]/10))):
