@@ -1,12 +1,17 @@
 import turtle as tu
 import math as m
 import itertools as tool
+from tkinter import messagebox
 
 #Paramètrage de Turtle (Force FullScreen + Instant Update) + Variable de l'état du jeu
 tu.Screen().setup(width = 1.0, height = 1.0)
+tu.Screen().getcanvas().winfo_toplevel().overrideredirect(1)
 tu.Screen().tracer(0)
 loop_started = False
 mouse_x, mouse_y = 0, 0
+
+messagebox.showinfo("The Game Of Life", "1 - Change the state of the cells by clicking on them\n2 - Start the simulation by pressing SPACE\n3 - End the fun by pressing SPACE again\n\nWarning ! The game has freezing issues !") # The alert.
+
 
 class Pixel(tu.Turtle):
 
@@ -95,6 +100,8 @@ def on_click_change(x,y):
 
 def loop():
     global loop_started
+    generation_number = 0
+    twrite = tu.Turtle(visible = False)
     loop_started = True
     tu.listen()
     while True:
@@ -107,6 +114,12 @@ def loop():
                 object_list[y+1][x+1].clear_pixel()
         for x, y in tool.product(range(int(tu.window_width()/10)), range(int(tu.window_height()/10))):
             state_list[y+1][x+1] = object_list[y+1][x+1].pixel_state
+        generation_number += 1
+        twrite.goto(0, 0)
+        twrite.clear()
+        print(generation_number)
+        twrite.write(f'Generation number : {generation_number}', False, align = 'left', font=('Arial', 50, 'normal'))
+        tu.Screen().update()
         tu.onkeypress(exit_func, 'space')
         tu.Screen().update()
 
