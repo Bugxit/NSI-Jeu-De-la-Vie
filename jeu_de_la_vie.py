@@ -10,6 +10,7 @@ tu.Screen().tracer(0)
 loop_started = False
 mouse_x, mouse_y = 0, 0
 
+#Message au lancement du jeu
 messagebox.showinfo("The Game Of Life", "1 - Change the state of the cells by clicking on them\n2 - Start the simulation by pressing SPACE\n3 - End the fun by pressing SPACE again\n\nWarning ! The game has freezing issues !") # The alert.
 
 
@@ -23,6 +24,7 @@ class Pixel(tu.Turtle):
         self.dead_neig = dead_neig
         self.alive_neig = alive_neig
 
+    #Fonction qui compte le nombre de cellules voisines mortes et vivante
     def neig_state(self):
         self.dead_neig = 0
         self.alive_neig = 0
@@ -33,6 +35,7 @@ class Pixel(tu.Turtle):
             self.dead_neig += -1
         self.alive_neig = 8-self.dead_neig
 
+    #Fonction qui change l'état de la celulle en fonction de ses voisins.
     def change_pixel_state(self):
         if self.pixel_state == 0 and self.alive_neig == 3:
             self.pixel_state = 1
@@ -42,24 +45,13 @@ class Pixel(tu.Turtle):
     def clear_pixel(self):
         self.clear()
 
+    #Fonction qui dessine la cellule 
     def draw_pixel(self):
         self.up()
         self.goto(self.coords[0]*10-tu.window_width()/2, self.coords[1]*10-tu.window_height()/2)
         self.seth(0)
         self.down()
         self.color('black')
-        self.begin_fill()
-        for i in range(4):
-            self.seth(i*90)
-            self.forward(10)
-        self.end_fill()
-
-    def draw_button_pixel(self):
-        self.up()
-        self.goto(self.coords[0]*10-tu.window_width()/2, self.coords[1]*10-tu.window_height()/2)
-        self.seth(0)
-        self.down()
-        self.color('green')
         self.begin_fill()
         for i in range(4):
             self.seth(i*90)
