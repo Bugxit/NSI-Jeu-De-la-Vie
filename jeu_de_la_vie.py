@@ -93,8 +93,6 @@ def on_click_change(x,y):
 #Boucle qui fait tourner le jeu jusqu'à contre-orde de la part de l'utilisateur
 def loop():
     global loop_started
-    generation_number = 0
-    twrite = tu.Turtle(visible = False)
     loop_started = True
     tu.listen()
     while True:
@@ -107,11 +105,6 @@ def loop():
                 object_list[y+1][x+1].clear_pixel()
         for x, y in tool.product(range(int(tu.window_width()/10)), range(int(tu.window_height()/10))):
             state_list[y+1][x+1] = object_list[y+1][x+1].pixel_state
-        generation_number += 1
-        twrite.goto(0, 0)
-        twrite.clear()
-        print(generation_number)
-        twrite.write(f'Generation number : {generation_number}', False, align = 'left', font=('Arial', 50, 'normal'))#Affichage du numéro de la génération
         tu.Screen().update()
         tu.onkeypress(exit_func, 'space') #Appelle la fonction exit_func lorsque l'utilisateur appuie sur Espace
         tu.Screen().update()
